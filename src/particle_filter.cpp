@@ -27,6 +27,10 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Add random Gaussian noise to each particle.
 	// NOTE: Consult particle_filter.h for more information about this method (and others in this file).
 
+	if (is_initialized) {
+	    return;
+	}
+
     num_particles = 100;
 
     // Create normal distributions
@@ -58,31 +62,29 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
-	for (int i=0; i<num_particles; i++) {
-	    Particle p = particles[i];
+	for (Particle& p : particles) {
+	    double x, y;
+	    double theta = p.theta;
 
-	    // Calculate updated x, y, and theta values to use as mean of normal distribution
-	    double x, y, theta;
-	    if (fabs(yaw_rate) < 0.0001) {
+	    // Find new x, y, and theta (mean) values
+	    if (fabs(yaw_rate) < 0.00001) {
             x = p.x + velocity * delta_t * cos(p.theta);
             y = p.y + velocity * delta_t * sin(p.theta);
-            theta = p.theta;
 	    } else{
             x = p.x + (velocity/yaw_rate) * (sin(p.theta + yaw_rate*delta_t) - sin(p.theta));
             y = p.y + (velocity/yaw_rate) * (cos(p.theta) - cos(p.theta + yaw_rate*delta_t));
-            theta = p.theta + yaw_rate*delta_t;
+            theta += yaw_rate * delta_t;
 	    }
 
+	    // Normal distributions centered around prediction value to account for noise
         normal_distribution<double> dist_x(x, std_pos[0]);
         normal_distribution<double> dist_y(y, std_pos[1]);
         normal_distribution<double> dist_theta(theta, std_pos[2]);
 
-        // Sample from normal distribution to account for noise in measurements
+        // Sample distribution
         p.x = dist_x(gen);
         p.y = dist_y(gen);
         p.theta = dist_theta(gen);
-
-        particles[i] = p;
 	}
 }
 
@@ -92,8 +94,8 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
 	//   implement this method and use it as a helper during the updateWeights phase.
 
-	for (LandmarkObs obs : observations) {
-        int best_id = -1;
+	for (LandmarkObs& obs : observations) {
+        int map_id = -1;
         double min_dist = numeric_limits<double>::max();
 
 	    for (LandmarkObs pred : predicted) {
@@ -101,11 +103,11 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 
 	        if (cur_dist < min_dist) {
 	            min_dist = cur_dist;
-                best_id = pred.id;
+                map_id = pred.id;
 	        }
 	    }
 
-	    obs.id = best_id;
+	    obs.id = map_id;
 	}
 }
 
@@ -122,59 +124,63 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33
 	//   http://planning.cs.uiuc.edu/node99.html
 
-    for (Particle p : particles) {
-        std::vector<LandmarkObs> predicted;
+    double std_x = std_landmark[0];
+    double std_y = std_landmark[1];
 
+    for (Particle& p : particles) {
+        double x = p.x;
+        double y = p.y;
+        double theta = p.theta;
+
+        std::vector<LandmarkObs> visible_landmarks;
         for (Map::single_landmark_s landmark : map_landmarks.landmark_list) {
-            double distance = dist(landmark.x_f, landmark.y_f, p.x, p.y);
+            double distance = dist(x, y, landmark.x_f, landmark.y_f);
 
             // Check if landmark is within sensor range of each particle
             if (fabs(distance) <= sensor_range) {
-                LandmarkObs pred = {landmark.id_i, landmark.x_f, landmark.y_f};
-                predicted.push_back(pred);
+                visible_landmarks.push_back(LandmarkObs{landmark.id_i, landmark.x_f, landmark.y_f});
             }
         }
 
-        std::cout << "Particle " << p.id << " sees " << predicted.size() << " landmarks" << std::endl;
-
         // Transform observations to map coordinates
-        std::vector<LandmarkObs> transformed;
+        std::vector<LandmarkObs> transformed_observations;
         for (LandmarkObs obs : observations) {
-            LandmarkObs trans;
+            double t_x = x + cos(theta)*obs.x - sin(theta)*obs.y;
+            double t_y = y + sin(theta)*obs.x + cos(theta)*obs.y;
 
-            trans.id = obs.id;
-            trans.x = p.x + cos(p.theta)*obs.x - sin(p.theta)*obs.y;
-            trans.y = p.y + sin(p.theta)*obs.x - cos(p.theta)*obs.y;
-
-            transformed.push_back(trans);
+            transformed_observations.push_back(LandmarkObs{obs.id, t_x, t_y});
 	    }
 
-	    dataAssociation(predicted, transformed);
+	    dataAssociation(visible_landmarks, transformed_observations);
 
         // Calculate new weight
         p.weight = 1.0;
-        for (LandmarkObs trans : transformed) {
-            double x, y, mu_x, mu_y, std_x, std_y;
+        for (LandmarkObs trans : transformed_observations) {
+            double observation_x, observation_y, landmark_x, landmark_y;
 
-            x = trans.x;
-            y = trans.y;
+            observation_x = trans.x;
+            observation_y = trans.y;
 
-            for (LandmarkObs pred : predicted) {
-                if (pred.id == trans.id) {
-                    mu_x = pred.x;
-                    mu_y = pred.y;
+            // Find associated landmark
+            for (LandmarkObs landmark : visible_landmarks) {
+                if (landmark.id == trans.id) {
+                    landmark_x = landmark.x;
+                    landmark_y = landmark.y;
+                    break;
                 }
             }
 
-            std_x = std_landmark[0];
-            std_y = std_landmark[1];
-
+            // Calculate weight
             double normalize = 1 / (2 * M_PI * std_x * std_y);
-            // mu_x - x??
-            double exp_x = pow( (x - mu_x), 2) / (2 * pow(std_x,2));
-            double exp_y = pow( (y - mu_y), 2) / (2 * pow(std_y,2));
+            double exp_x = pow(observation_x - landmark_x, 2) / (2 * pow(std_x, 2));
+            double exp_y = pow(observation_y - landmark_y, 2) / (2 * pow(std_y, 2));
+            double weight = normalize * exp( -(exp_x + exp_y) );
 
-            p.weight *= normalize * exp( -(exp_x + exp_y) );
+            if (weight == 0) {
+                p.weight *= 0.00001;
+            } else {
+                p.weight *= weight;
+            }
         }
 	}
 }
@@ -198,7 +204,7 @@ void ParticleFilter::resample() {
     double beta = 0.0;
 
     // Resample new particles
-    for (Particle p : particles) {
+    for (int i=0; i<num_particles; i++) {
         int idx = dist_index(gen);
         beta += dist_beta(gen);
 

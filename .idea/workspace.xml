@@ -11,8 +11,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="204663b7-024e-424b-81ad-ffdfcb0aa2f9" name="Default Changelist" comment="">
+    <list default="true" id="204663b7-024e-424b-81ad-ffdfcb0aa2f9" name="Default Changelist" comment="fix: Fix bug in transformation to map coordinates (incorrect sign)&#10;&#10;This commit fixes a bug when transforming observations from vehicle coordinates to map coordinates where the sign in the Y equation was incorrect.&#10;&#10;It also changes some variable names and">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/particle_filter.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/particle_filter.dir/depend.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/particle_filter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/particle_filter.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -27,11 +28,12 @@
     <session id="-1838253353">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.26" value="1" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.opened" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -47,13 +49,15 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="4919" />
+          <entry key="cpp" value="7528" />
           <entry key="h" value="153" />
+          <entry key="txt" value="827" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="ObjectiveC" value="5072" />
+          <entry key="ObjectiveC" value="7681" />
+          <entry key="PLAIN_TEXT" value="827" />
         </counts>
       </usages-collector>
     </session>
@@ -63,8 +67,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="569">
-              <caret line="113" column="30" selection-start-line="113" selection-start-column="30" selection-end-line="113" selection-end-column="30" />
+            <state relative-caret-position="394">
+              <caret line="83" selection-start-line="83" selection-end-line="83" />
             </state>
           </provider>
         </entry>
@@ -72,8 +76,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/particle_filter.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2625">
-              <caret line="185" column="40" lean-forward="true" selection-start-line="185" selection-start-column="40" selection-end-line="185" selection-end-column="40" />
+            <state relative-caret-position="297">
+              <caret line="68" column="43" selection-start-line="68" selection-start-column="43" selection-end-line="68" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -81,7 +85,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/particle_filter.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
+            <state relative-caret-position="300">
               <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
             </state>
           </provider>
@@ -90,8 +94,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/helper_functions.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="479">
-              <caret line="242" lean-forward="true" selection-start-line="242" selection-end-line="242" />
+            <state relative-caret-position="3630">
+              <caret line="242" selection-start-line="242" selection-end-line="242" />
             </state>
           </provider>
         </entry>
@@ -202,21 +206,28 @@
       <updated>1541187006876</updated>
       <workItem from="1541187008344" duration="3184000" />
       <workItem from="1541278513834" duration="11000" />
-      <workItem from="1541278548857" duration="5793000" />
+      <workItem from="1541278548857" duration="5983000" />
+      <workItem from="1541344614901" duration="4938000" />
     </task>
+    <task id="LOCAL-00001" summary="feat: Complete remaining TODOs (updateWeights and resample)&#10;&#10;This commit completes the updateWeights and resample functions and updates a few other functions after gaining a better understanding of the project. The code has been tested but does not work, however all major features have been completed and it just needs to be debugged.">
+      <created>1541285760031</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1541285760031</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8988000" />
+    <option name="totallyTimeSpent" value="14116000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="5" y="36" width="1260" height="738" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24958949" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.2536946" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Messages" weight="0.32972136" />
       <window_info anchor="bottom" id="Terminal" order="0" />
       <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="2" show_stripe_button="false" />
@@ -229,6 +240,7 @@
       <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="11" />
+      <window_info anchor="bottom" id="Messages" order="12" weight="0.32972136" />
       <window_info anchor="right" id="Database" order="0" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
@@ -262,18 +274,22 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: Complete remaining TODOs (updateWeights and resample)&#10;&#10;This commit completes the updateWeights and resample functions and updates a few other functions after gaining a better understanding of the project. The code has been tested but does not work, however all major features have been completed and it just needs to be debugged." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Complete remaining TODOs (updateWeights and resample)&#10;&#10;This commit completes the updateWeights and resample functions and updates a few other functions after gaining a better understanding of the project. The code has been tested but does not work, however all major features have been completed and it just needs to be debugged." />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+    <entry file="file://$PROJECT_DIR$/src/particle_filter.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="113" column="30" selection-start-line="113" selection-start-column="30" selection-end-line="113" selection-end-column="30" />
+        <state relative-caret-position="300">
+          <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/particle_filter.h">
+    <entry file="file://$PROJECT_DIR$/src/helper_functions.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
+        <state relative-caret-position="3630">
+          <caret line="242" selection-start-line="242" selection-end-line="242" />
         </state>
       </provider>
     </entry>
@@ -284,17 +300,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/helper_functions.h">
+    <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="242" lean-forward="true" selection-start-line="242" selection-end-line="242" />
+        <state relative-caret-position="394">
+          <caret line="83" selection-start-line="83" selection-end-line="83" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/particle_filter.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2625">
-          <caret line="185" column="40" lean-forward="true" selection-start-line="185" selection-start-column="40" selection-end-line="185" selection-end-column="40" />
+        <state relative-caret-position="297">
+          <caret line="68" column="43" selection-start-line="68" selection-start-column="43" selection-end-line="68" selection-end-column="43" />
         </state>
       </provider>
     </entry>
